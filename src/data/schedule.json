@@ -1,0 +1,49 @@
+{
+  "jadwal": {
+    "semester1": {
+      "title": "Semester I",
+      "range": "Januari s.d. Juni 2026",
+      "deadline": "25 Juni 2026",
+      "status": "Berlangsung",
+      "live": true,
+      "description": "Paling lambat 3 (tiga) hari kerja sebelum akhir Juni 2026.",
+      "surat_dinas": "Surat Dinas KPU RI Nomor 464/PL.01.1-SD/06/2026",
+      "link_surat_dinas": "https://drive.google.com/file/d/1moNb7v8K1B44HY2lvhemmea4qm93XTWA/view"
+    },
+    "semester2": {
+      "title": "Semester II",
+      "range": "Juli s.d. Desember 2026",
+      "deadline": "-",
+      "live": false,
+      "status": "Akan Datang",
+      "description": "Paling lambat 3 (tiga) hari kerja sebelum akhir Desember 2026.",
+      "surat_dinas": "Menunggu Surat Dinas KPU RI selanjutnya",
+      "link_surat_dinas": "#"
+    }
+  },
+
+  "dasar_hukum": [
+    {
+      "nama": "Keputusan KPU Nomor 1365 Tahun 2023",
+      "url": "https://jdih.kpu.go.id/keputusan-kpu/detail/NnaJynNIAzwsYMeFmN2zUEZGc3ZiaXZKR1hFaE5NZkhTSXRxMVE9PQ"
+    },
+    {
+      "nama": "Keputusan KPU Nomor 658 Tahun 2024",
+      "url": "https://jdih.kpu.go.id/data/data_kepkpu/2024kpt658.pdf"
+    }
+  ],
+  "cakupan_data": [
+    "Kepengurusan Partai Politik",
+    "Keterwakilan Perempuan",
+    "Keanggotaan Partai Politik",
+    "Domisili Kantor Tetap"
+  ],
+  "sop": {
+    "sop_utama": "https://drive.google.com/file/d/1moNb7v8K1B44HY2lvhemmea4qm93XTWA/view?usp=drive_link"
+  },
+  "survey": {
+    "aktif": false,
+    "nama": "Survei Kepuasan Pelayanan",
+    "link": "https://docs.google.com/forms/d/e/1FAIpQLSeQyU.../viewform"
+  }
+}
