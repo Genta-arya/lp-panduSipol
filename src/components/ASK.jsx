@@ -75,7 +75,7 @@ const ASK = () => {
     },
   ];
 
-  useEffect(() => {
+ useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatHistory, loading]);
 
@@ -84,7 +84,12 @@ const ASK = () => {
 
     if (!msg.trim() || loading) return;
 
-    setChatHistory((prev) => [...prev, { role: "user", text: msg }]);
+    const userMsg = { role: "user", text: msg };
+    
+    // Menyusun history terbaru untuk mempertahankan konteks percakapan (Menjawab masalah amnesia AI)
+    const updatedHistory = [...chatHistory, userMsg];
+
+    setChatHistory(updatedHistory);
     setPrompt("");
     setLoading(true);
 
@@ -92,7 +97,10 @@ const ASK = () => {
       const response = await fetch("https://server-lp-pandu-sipol.vercel.app/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: msg }),
+        body: JSON.stringify({ 
+          prompt: msg,
+          history: updatedHistory // Mengirimkan history ke Vercel backend
+        }),
       });
 
       const data = await response.json();
@@ -137,6 +145,7 @@ const ASK = () => {
     }
   };
 
+  
   //   useffect jika modal dibuka dan otomatis scroll chat ke paling akhir
   useEffect(() => {
     if (isModalOpen) {
