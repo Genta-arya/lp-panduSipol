@@ -92,7 +92,7 @@ const ASK = () => {
     setChatHistory(updatedHistory);
     setPrompt("");
     setLoading(true);
-
+// 
     try {
       const response = await fetch("https://server-lp-pandu-sipol.vercel.app/api/chat", {
         method: "POST",
