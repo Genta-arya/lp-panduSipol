@@ -99,7 +99,7 @@ const InfoSection = () => {
                   />
                 </div>
                 <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
-                  <QrCode size={12} className="text-[#700D09]" /> Scan QR Layanan
+                  <QrCode size={12} className="text-[#700D09]" /> Scan QR Panduan
                 </span>
               </div>
 
