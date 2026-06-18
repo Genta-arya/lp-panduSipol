@@ -158,7 +158,7 @@ const PeriodeSection = () => {
           >
             <button
               onClick={() => setShowModal(true)}
-              className="flex items-center gap-3 bg-[#700D09] hover:bg-orange-600 text-white px-8 py-4 rounded-2xl font-bold shadow-lg shadow-[#700D09]/20 transition-all hover:scale-105"
+              className="flex items-center text-sm gap-3 bg-[#700D09] hover:bg-orange-600 text-white px-8 py-3 rounded-2xl font-bold shadow-lg shadow-[#700D09]/20 transition-all hover:scale-105"
             >
               <FileText size={20} /> Lihat SOP
             </button>
