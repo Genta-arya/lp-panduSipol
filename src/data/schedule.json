@@ -21,7 +21,6 @@
       "link_surat_dinas": "#"
     }
   },
-
   "dasar_hukum": [
     {
       "nama": "Keputusan KPU Nomor 1365 Tahun 2023",
@@ -41,9 +40,18 @@
   "sop": {
     "sop_utama": "https://drive.google.com/file/d/1moNb7v8K1B44HY2lvhemmea4qm93XTWA/view?usp=drive_link"
   },
-  "survey": {
-    "aktif": true,
-    "nama": "Survei Kepuasan Pelayanan",
-    "link": "https://bit.ly/4xT4Jb1"
-  }
+  "surveys": [
+    {
+      "id": "q1",
+      "nama": "Survei Kepuasan Pelayanan - Triwulan I",
+      "aktif": true,
+      "link": "https://bit.ly/4xT4Jb1"
+    },
+    {
+      "id": "q2",
+      "nama": "Survei Kepuasan Pelayanan - Triwulan II",
+      "aktif": false,
+      "link": "https://bit.ly/link-triwulan-2"
+    }
+  ]
 }
