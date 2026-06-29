@@ -163,7 +163,7 @@ const ASK = () => {
 
   return (
     <>
-      <Toaster richColors position="top-center" />
+     
 
       {/* FLOATING CORNER CONTAINER */}
       <div className="fixed bottom-6 right-2 md:right-6 z-[60] flex flex-col items-end gap-4">

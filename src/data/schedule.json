@@ -45,13 +45,15 @@
       "id": "q1",
       "nama": "Survei Kepuasan Pelayanan - Triwulan I",
       "aktif": true,
-      "link": "https://bit.ly/4xT4Jb1"
+      "link": "https://bit.ly/4xT4Jb1",
+      "id_qr_drive": "1z5gw2rJyzkV8HUpQ5cvlSxBUo-QpH0ko"
     },
     {
       "id": "q2",
       "nama": "Survei Kepuasan Pelayanan - Triwulan II",
       "aktif": false,
-      "link": "https://bit.ly/link-triwulan-2"
+      "link": "https://bit.ly/link-triwulan-2",
+      "id_qr_drive": ""
     }
   ]
 }
