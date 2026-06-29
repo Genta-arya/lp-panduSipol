@@ -42,8 +42,8 @@
     "sop_utama": "https://drive.google.com/file/d/1moNb7v8K1B44HY2lvhemmea4qm93XTWA/view?usp=drive_link"
   },
   "survey": {
-    "aktif": false,
+    "aktif": true,
     "nama": "Survei Kepuasan Pelayanan",
-    "link": "https://docs.google.com/forms/d/e/1FAIpQLSeQyU.../viewform"
+    "link": "https://bit.ly/4xT4Jb1"
   }
 }
