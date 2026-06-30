@@ -240,7 +240,7 @@ const InfoSection = () => {
                   },
                   {
                     title: "Bawaslu",
-                    desc: "Pengawasan Melekat",
+                    desc: "Pengawasan",
                     color: "bg-emerald-50 text-emerald-600",
                   },
                 ].map((p, i) => (
