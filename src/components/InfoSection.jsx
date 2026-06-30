@@ -142,7 +142,6 @@ const InfoSection = () => {
                     />
                   </div>
                   {/* Teks Pernyataan Maklumat */}
-                 
                 </div>
               </div>
 
@@ -189,9 +188,7 @@ const InfoSection = () => {
                         <p className="text-[10px] text-slate-400 group-hover:text-red-200 font-medium">
                           Operator 1
                         </p>
-                        <p className="text-xs font-bold">
-                          Agung
-                        </p>
+                        <p className="text-xs font-bold">Agung</p>
                       </div>
                     </a>
 
@@ -208,9 +205,7 @@ const InfoSection = () => {
                         <p className="text-[10px] text-slate-400 group-hover:text-red-200 font-medium">
                           Operator 2
                         </p>
-                        <p className="text-xs font-bold">
-                          Genta
-                        </p>
+                        <p className="text-xs font-bold">Genta</p>
                       </div>
                     </a>
                   </div>
@@ -231,25 +226,39 @@ const InfoSection = () => {
                   {
                     title: "KPU",
                     desc: "Verifikator Data & Dokumen",
-                    color: "bg-blue-50 text-blue-600",
+                    color: "bg-blue-50 border-blue-100",
+                    iconUrl: "https://www.kpu.go.id/img/logo-kpu.png",
                   },
                   {
                     title: "Partai Politik",
                     desc: "Input & Update melalui SIPOL",
-                    color: "bg-orange-50 text-orange-600",
+                    color: "bg-orange-50 border-orange-100",
+                    // Menggunakan ilustrasi siluet gedung/grup perwakilan parpol yang bersih
+                    iconUrl:
+                      "https://cdn-icons-png.flaticon.com/512/921/921347.png",
                   },
                   {
                     title: "Bawaslu",
                     desc: "Pengawasan",
-                    color: "bg-emerald-50 text-emerald-600",
+                    color: "bg-emerald-50 border-emerald-100",
+                    iconUrl:
+                      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwchIddSyO8-D5P0DEv_BIyZYfeTf44kRcbw&s",
                   },
                 ].map((p, i) => (
                   <div
                     key={i}
-                    className="flex items-center gap-4 p-4 rounded-2xl border border-slate-100 hover:border-slate-200 transition-all"
+                    className="flex items-center gap-4 p-4 rounded-2xl border border-slate-100 hover:border-slate-200 transition-all bg-white shadow-sm"
                   >
-                    <div className={`p-3 rounded-xl ${p.color}`}>
-                      <Users size={20} />
+                    {/* Container Image Wrapper pengganti Lucide Icon */}
+                    <div
+                      className={`w-12 h-12 rounded-xl border flex items-center justify-center p-2 flex-shrink-0 bg-white ${p.color}`}
+                    >
+                      <img
+                        src={p.iconUrl}
+                        alt={`Logo ${p.title}`}
+                        className="max-w-full max-h-full object-contain"
+                        loading="lazy"
+                      />
                     </div>
                     <div>
                       <p className="font-bold text-sm text-slate-900">
