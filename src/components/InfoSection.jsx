@@ -10,11 +10,11 @@ import {
   Loader2,
 } from "lucide-react";
 // Import koneksi db Firestore dari config Firebase Anda
-import { db } from "../Config/firebase"; 
+import { db } from "../Config/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import qr from "../assets/qr.png";
 import { toast } from "sonner";
-
+import maklumat from "../assets/Maklumat-pelayanan.png";
 const deskripsiCakupan = {
   "Kepengurusan Partai Politik":
     "Data ketua, sekretaris, dan bendahara di tingkat pusat hingga kecamatan.",
@@ -37,10 +37,9 @@ const InfoSection = () => {
       try {
         const docRef = doc(db, "landing_page_data", "sipol_info");
         const docSnap = await getDoc(docRef);
-        
+
         if (docSnap.exists()) {
           setLiveData(docSnap.data());
-         
         } else {
           console.error("Dokumen sipol_info tidak ditemukan di database.");
         }
@@ -129,65 +128,95 @@ const InfoSection = () => {
               </div>
             )}
 
-            {/* QR CODE & KONTAK PELAYANAN HELPDESK */}
-            <div className="bg-slate-50 rounded-3xl p-6 sm:p-8 border border-slate-100 grid sm:grid-cols-12 gap-6 items-center">
-              <div className="sm:col-span-5 flex flex-col items-center text-center bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
-                <div className="mb-2 p-1 bg-slate-50 rounded-lg">
-                  <img 
-                    src={qr} 
-                    alt="QR Code Pelayanan KPU" 
-                    className="w-32 h-32 md:w-36 md:h-36 object-contain"
-                  />
+            <div className="space-y-6">
+              {/* 1. MAKLUMAT PELAYANAN (POSISI ATAS: SEBAGAI PAYUNG INFORMASI) */}
+              <div className="bg-gradient-to-br from-slate-900 to-slate-950 rounded-3xl p-6 sm:p-8 text-white border border-slate-800 shadow-md">
+                <div className="flex flex-col md:flex-row gap-6 items-center">
+                  {/* Gambar Maklumat */}
+                  <div className="w-full rounded-2xl overflow-hidden border border-slate-800 bg-slate-900 shadow-md flex-shrink-0">
+                    <img
+                      src={maklumat}
+                      alt="Maklumat Pelayanan KPU Kabupaten Sekadau"
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                  </div>
+                  {/* Teks Pernyataan Maklumat */}
+                 
                 </div>
-                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
-                  <QrCode size={12} className="text-[#700D09]" /> Scan QR Panduan
-                </span>
               </div>
 
-              <div className="sm:col-span-7 space-y-4">
-                <div>
-                  <h4 className="font-black text-slate-900 text-lg flex items-center gap-2 mb-1">
-                    Kontak Pelayanan
-                  </h4>
-                  <p className="text-xs text-slate-500">
-                    Butuh bantuan teknis terkait SIPOL? Hubungi tim admin Helpdesk KPU Kabupaten Sekadau.
-                  </p>
+              {/* 2. AKSES TEKNIS (POSISI BAWAH: QR CODE & KONTAK HELPDESK) */}
+              <div className="bg-slate-50 rounded-3xl p-6 sm:p-8 border border-slate-100 grid md:grid-cols-12 gap-6 items-center">
+                {/* Sub-Kiri: QR Scan */}
+                <div className="md:col-span-5 flex flex-col items-center text-center bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+                  <div className="mb-3 p-2 bg-slate-50 rounded-xl border border-slate-200/60 inline-block">
+                    <img
+                      src={qr}
+                      alt="QR Code Pelayanan KPU"
+                      className="w-28 h-28 object-contain"
+                    />
+                  </div>
+                  <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5 bg-slate-50 px-3 py-1 rounded-lg border border-slate-200">
+                    <QrCode size={12} className="text-[#700D09]" /> Scan QR
+                    Panduan
+                  </span>
                 </div>
 
-                <div className="space-y-2 pt-2">
-                  <a 
-                    href="https://wa.me/6289618601348" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-3 p-3 bg-white hover:bg-[#700D09] hover:text-white rounded-xl transition-all border border-slate-100 group shadow-sm"
-                  >
-                    <div className="p-2 rounded-lg bg-emerald-50 text-emerald-600 group-hover:bg-white/20 group-hover:text-white transition-colors">
-                      <Phone size={16} />
-                    </div>
-                    <div>
-                      <p className="text-xs text-slate-400 group-hover:text-red-200 transition-colors font-medium">Admin Helpdesk 1</p>
-                      <p className="text-sm font-bold">Genta (0896-1860-1348)</p>
-                    </div>
-                  </a>
+                {/* Sub-Kanan: Kontak WhatsApp Helpdesk */}
+                <div className="md:col-span-7 space-y-4">
+                  <div>
+                    <h4 className="font-black text-slate-900 text-base flex items-center gap-2 mb-1">
+                      Kontak Pelayanan Helpdesk
+                    </h4>
+                    <p className="text-xs text-slate-500 leading-relaxed">
+                      Butuh bantuan teknis kilat terkait kendala aplikasi SIPOL?
+                      Sila hubungi tim admin Helpdesk KPU Kabupaten Sekadau.
+                    </p>
+                  </div>
 
-                  <a 
-                    href="https://wa.me/6282261247070" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-3 p-3 bg-white hover:bg-[#700D09] hover:text-white rounded-xl transition-all border border-slate-100 group shadow-sm"
-                  >
-                    <div className="p-2 rounded-lg bg-emerald-50 text-emerald-600 group-hover:bg-white/20 group-hover:text-white transition-colors">
-                      <Phone size={16} />
-                    </div>
-                    <div>
-                      <p className="text-xs text-slate-400 group-hover:text-red-200 transition-colors font-medium">Admin Helpdesk 2</p>
-                      <p className="text-sm font-bold">Agung (0822-6124-7070)</p>
-                    </div>
-                  </a>
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    <a
+                      href="https://wa.me/6289618601348"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 p-3 bg-white hover:bg-[#700D09] hover:text-white rounded-xl transition-all border border-slate-100 group shadow-sm"
+                    >
+                      <div className="p-2 rounded-lg bg-emerald-50 text-emerald-600 group-hover:bg-white/20 group-hover:text-white transition-colors">
+                        <Phone size={14} />
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-slate-400 group-hover:text-red-200 font-medium">
+                          Admin 1
+                        </p>
+                        <p className="text-xs font-bold">
+                          Genta (0896-1860-1348)
+                        </p>
+                      </div>
+                    </a>
+
+                    <a
+                      href="https://wa.me/6282261247070"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 p-3 bg-white hover:bg-[#700D09] hover:text-white rounded-xl transition-all border border-slate-100 group shadow-sm"
+                    >
+                      <div className="p-2 rounded-lg bg-emerald-50 text-emerald-600 group-hover:bg-white/20 group-hover:text-white transition-colors">
+                        <Phone size={14} />
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-slate-400 group-hover:text-red-200 font-medium">
+                          Admin 2
+                        </p>
+                        <p className="text-xs font-bold">
+                          Agung (0822-6124-7070)
+                        </p>
+                      </div>
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
-
           </div>
 
           {/* Kolom Kanan */}

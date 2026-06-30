@@ -165,8 +165,8 @@ const SurveyKepuasaForm = () => {
 
                   <p className="text-slate-600 text-sm mb-6 leading-relaxed">
                     {item.aktif
-                      ? "Silakan berikan penilaian Anda mengenai kualitas pelayanan kami selama periode triwulan ini."
-                      : "Saat ini periode pengisian survei untuk triwulan ini belum dibuka atau telah berakhir."}
+                      ? "Silakan berikan penilaian Anda mengenai kualitas pelayanan kami selama periode semester ini."
+                      : "Saat ini periode pengisian survei untuk semester ini belum dibuka atau telah berakhir."}
                   </p>
                 </div>
 
