@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   ExternalLink,
   Star,
@@ -7,17 +8,43 @@ import {
   QrCode,
   Download,
   X,
+  Loader2,
 } from "lucide-react";
-import scheduleData from "../data/schedule.json";
 import { toast } from "sonner";
+// Import koneksi db Firestore dari config Firebase Anda
+import { db } from "../Config/firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 const SurveyKepuasaForm = () => {
-  const { surveys } = scheduleData;
-
+  const [surveys, setSurveys] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  
   // State untuk kontrol visual share & modal preview QR Code
   const [copiedId, setCopiedId] = useState(null);
   const [showQrModal, setShowQrModal] = useState(false);
   const [selectedSurvey, setSelectedSurvey] = useState(null);
+
+  // 1. Fetch Data Survei secara Realtime dari Firestore
+  useEffect(() => {
+    const fetchSurveysData = async () => {
+      try {
+        const docRef = doc(db, "landing_page_data", "sipol_info");
+        const docSnap = await getDoc(docRef);
+        
+        if (docSnap.exists() && docSnap.data().surveys) {
+          setSurveys(docSnap.data().surveys);
+        } else {
+          console.error("Data survei tidak ditemukan di Firestore.");
+        }
+      } catch (error) {
+        console.error("Gagal sinkronisasi data survei:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchSurveysData();
+  }, []);
 
   const handleShare = async (item) => {
     if (navigator.share) {
@@ -48,31 +75,42 @@ const SurveyKepuasaForm = () => {
     setShowQrModal(true);
   };
 
+  // Fungsi Unduh Gambar QR Code murni via blob internal browser
   const downloadQrCode = async () => {
-    if (!selectedSurvey || !selectedSurvey.id_qr_drive) return;
-
-    const qrImageUrl = `https://lh3.googleusercontent.com/d/${selectedSurvey.id_qr_drive}`;
+    if (!selectedSurvey || !selectedSurvey.link_qr_code) return;
 
     try {
-      // Mengambil data binary blob gambar dari CDN Google Drive agar bisa langsung tersimpan lokal
-      const response = await fetch(qrImageUrl);
+      const response = await fetch(selectedSurvey.link_qr_code);
       const blob = await response.blob();
       const blobUrl = URL.createObjectURL(blob);
 
       const link = document.createElement("a");
       link.href = blobUrl;
-      link.download = `QR_Code_${selectedSurvey.id}.png`;
+      link.download = `QR_Code_Survei_${selectedSurvey.id}.png`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(blobUrl);
-      toast.success("QR Code berhasil diunduh!");
+      toast.success("Gambar QR Code berhasil diunduh!");
     } catch (error) {
-      // Fallback jika fetch terhalang oleh restriksi CORS browser
-      window.open(qrImageUrl, "_blank");
-      toast.info("Membuka gambar di tab baru untuk disimpan manual");
+      window.open(selectedSurvey.link_qr_code, "_blank");
+      toast.info("Membuka berkas gambar di tab baru untuk disimpan manual.");
     }
   };
+
+  // Tampilan Placeholder Sinkronisasi Database
+  if (isLoading) {
+    return (
+      <div className="py-24 flex flex-col items-center justify-center bg-slate-50">
+        <Loader2 className="w-7 h-7 animate-spin text-slate-400" />
+        <span className="text-xs text-slate-400 mt-2 font-light tracking-wide">
+          Menyinkronkan Kuesioner Pelayanan...
+        </span>
+      </div>
+    );
+  }
+
+  if (surveys.length === 0) return null;
 
   return (
     <section id="survey-section" className="py-20 bg-slate-50 relative">
@@ -147,9 +185,10 @@ const SurveyKepuasaForm = () => {
                         <ExternalLink size={16} />
                       </a>
 
-                      {/* Tombol Tampilkan QR Code (Hanya muncul jika id_qr_drive tersedia di JSON) */}
-                      {item.id_qr_drive && (
+                      {/* TOMBOL QR CODE (Muncul Jika Gambar Sudah Terupload di Admin) */}
+                      {item.link_qr_code && item.link_qr_code.trim() !== "" && (
                         <button
+                          type="button"
                           onClick={() => openQrModal(item)}
                           className="inline-flex items-center justify-center gap-2 bg-slate-100 text-slate-800 px-4 py-3 rounded-xl text-sm font-bold transition-colors hover:bg-slate-200 border border-slate-200 w-full sm:w-auto"
                         >
@@ -160,6 +199,7 @@ const SurveyKepuasaForm = () => {
 
                       {/* Tombol Bagikan */}
                       <button
+                        type="button"
                         onClick={() => handleShare(item)}
                         className={`inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-bold transition-colors border w-full sm:w-auto ${
                           copiedId === item.id
@@ -169,9 +209,7 @@ const SurveyKepuasaForm = () => {
                       >
                         <Share2
                           size={16}
-                          className={
-                            copiedId === item.id ? "animate-bounce" : ""
-                          }
+                          className={copiedId === item.id ? "animate-bounce" : ""}
                         />
                         <span>
                           {copiedId === item.id ? "Tersalin!" : "Bagikan"}
@@ -194,50 +232,56 @@ const SurveyKepuasaForm = () => {
         </div>
       </div>
 
-      {/* POPUP / MODAL PREVIEW QR CODE */}
-      {showQrModal && selectedSurvey && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 transition-all">
-          <div className="bg-white rounded-[2rem] max-w-sm w-full p-6 shadow-2xl relative border border-slate-100 animate-in fade-in zoom-in-95 duration-200">
-            {/* Tombol Tutup Modal */}
-            <button
-              onClick={() => setShowQrModal(false)}
-              className="absolute right-4 top-4 text-slate-400 hover:text-slate-600 p-2 rounded-full hover:bg-slate-100 transition-colors"
+      {/* MODAL POPUP PREVIEW QR CODE MURNI IMAGE */}
+      <AnimatePresence>
+        {showQrModal && selectedSurvey && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-white rounded-[2rem] max-w-sm w-full p-6 shadow-2xl relative border border-slate-100"
             >
-              <X size={20} />
-            </button>
-
-            <div className="text-center mt-2">
-              <h4 className="font-black text-slate-900 text-lg uppercase tracking-tight mb-1">
-                QR Code Survei
-              </h4>
-              <p className="text-xs text-slate-500 mb-6 px-4">
-                {selectedSurvey.nama}
-              </p>
-
-              {/* Preview Gambar QR Code dari Google Drive */}
-              <div className="w-full  bg-slate-100 rounded-2xl overflow-hidden border border-slate-200 mb-6 shadow-inner relative">
-                <iframe
-                  src={`https://drive.google.com/file/d/${selectedSurvey.id_qr_drive}/preview`}
-                  className="w-full h-full border-0"
-                  allow="autoplay"
-                  title="QR Code Preview"
-                ></iframe>
-              </div>
-
-              {/* Tombol Unduh */}
-              <a
-                href={`https://drive.google.com/file/d/${selectedSurvey.id_qr_drive}/view?usp=sharing`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 bg-slate-900 text-white px-6 py-3 rounded-xl text-sm font-bold transition-colors hover:bg-slate-800 w-full shadow-md"
+              <button
+                type="button"
+                onClick={() => setShowQrModal(false)}
+                className="absolute right-4 top-4 text-slate-400 hover:text-slate-600 p-2 rounded-full hover:bg-slate-100 transition-colors"
               >
-                <Download size={16} />
-                <span>Unduh / Buka di Drive</span>
-              </a>
-            </div>
+                <X size={20} />
+              </button>
+
+              <div className="text-center mt-2">
+                <h4 className="font-black text-slate-900 text-lg uppercase tracking-tight mb-1">
+                  QR Code Survei
+                </h4>
+                <p className="text-xs text-slate-500 mb-6 px-4">
+                  {selectedSurvey.nama}
+                </p>
+
+                {/* Render Gambar QR Code External Link Server */}
+                <div className="w-48 h-48 mx-auto bg-slate-50 rounded-2xl overflow-hidden border border-slate-200 mb-6 p-2 shadow-sm flex items-center justify-center">
+                  <img
+                    src={selectedSurvey.link_qr_code}
+                    className="max-w-full max-h-full object-contain"
+                    alt={`QR Code ${selectedSurvey.nama}`}
+                    loading="lazy"
+                  />
+                </div>
+
+                {/* Tombol Unduh */}
+                <button
+                  type="button"
+                  onClick={downloadQrCode}
+                  className="inline-flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-6 py-3 rounded-xl text-sm font-bold transition-all w-full shadow-md active:scale-98"
+                >
+                  <Download size={16} />
+                  <span>Unduh Gambar QR</span>
+                </button>
+              </div>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
     </section>
   );
 };

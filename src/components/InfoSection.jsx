@@ -1,18 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  BookOpen,
   AlertCircle,
   CheckCircle2,
   ChevronDown,
   Users,
   Phone,
   QrCode,
+  Loader2,
 } from "lucide-react";
-import scheduleData from "../data/schedule.json";
+// Import koneksi db Firestore dari config Firebase Anda
+import { db } from "../Config/firebase"; 
+import { doc, getDoc } from "firebase/firestore";
 import qr from "../assets/qr.png";
+import { toast } from "sonner";
 
-// Pastikan data deskripsi sesuai dengan kunci yang ada di cakupan_data
 const deskripsiCakupan = {
   "Kepengurusan Partai Politik":
     "Data ketua, sekretaris, dan bendahara di tingkat pusat hingga kecamatan.",
@@ -26,6 +28,46 @@ const deskripsiCakupan = {
 
 const InfoSection = () => {
   const [openIndex, setOpenIndex] = useState(null);
+  const [liveData, setLiveData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch Data Landing Page dari Firestore
+  useEffect(() => {
+    const fetchLandingData = async () => {
+      try {
+        const docRef = doc(db, "landing_page_data", "sipol_info");
+        const docSnap = await getDoc(docRef);
+        
+        if (docSnap.exists()) {
+          setLiveData(docSnap.data());
+         
+        } else {
+          console.error("Dokumen sipol_info tidak ditemukan di database.");
+        }
+      } catch (error) {
+        console.error("Gagal memuat data dari Firestore:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchLandingData();
+  }, []);
+
+  // Tampilan Placeholder Menunggu Data Realtime Selesai Dimuat
+  if (isLoading) {
+    return (
+      <div className="py-32 flex flex-col items-center justify-center bg-white">
+        <Loader2 className="w-8 h-8 animate-spin text-[#700D09]" />
+        <span className="text-xs text-slate-400 mt-3 font-light tracking-wide">
+          Memuat Informasi Sinkronisasi SIPOL...
+        </span>
+      </div>
+    );
+  }
+
+  // Fallback pengaman jika data gagal dimuat atau kosong di Firestore
+  if (!liveData) return null;
 
   return (
     <section
@@ -59,37 +101,36 @@ const InfoSection = () => {
               </p>
             </div>
 
-            {/* Dasar Hukum */}
-            <div>
-              <h4 className="font-black text-slate-900 mb-6 flex items-center gap-3">
-                <div className="bg-orange-100 p-2 rounded-lg">
-                  <AlertCircle size={20} className="text-orange-600" />
-                </div>{" "}
-                Dasar Hukum
-              </h4>
-              <div className="space-y-3">
-                {scheduleData.dasar_hukum.map((item, i) => (
-                  <a
-                    key={i}
-                    href={item.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-between p-4 bg-slate-50 healthiest rounded-xl hover:bg-[#700D09] hover:text-white transition-all group"
-                  >
-                    <span className="font-semibold text-sm">{item.nama}</span>
-                    <span className="text-[10px] bg-white/20 px-2 py-1 rounded border border-current">
-                      PDF
-                    </span>
-                  </a>
-                ))}
+            {/* Dasar Hukum (Fetched Online) */}
+            {liveData.dasar_hukum && liveData.dasar_hukum.length > 0 && (
+              <div>
+                <h4 className="font-black text-slate-900 mb-6 flex items-center gap-3">
+                  <div className="bg-orange-100 p-2 rounded-lg">
+                    <AlertCircle size={20} className="text-orange-600" />
+                  </div>{" "}
+                  Dasar Hukum
+                </h4>
+                <div className="space-y-3">
+                  {liveData.dasar_hukum.map((item, i) => (
+                    <a
+                      key={i}
+                      href={item.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-between p-4 bg-slate-50 rounded-xl hover:bg-[#700D09] hover:text-white transition-all group"
+                    >
+                      <span className="font-semibold text-sm">{item.nama}</span>
+                      <span className="text-[10px] bg-white/20 px-2 py-1 rounded border border-current">
+                        PDF
+                      </span>
+                    </a>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
-            {/* ========================================================= */}
-            {/* TEMPAT BARU: QR CODE & KONTAK PELAYANAN HELPDESK */}
-            {/* ========================================================= */}
+            {/* QR CODE & KONTAK PELAYANAN HELPDESK */}
             <div className="bg-slate-50 rounded-3xl p-6 sm:p-8 border border-slate-100 grid sm:grid-cols-12 gap-6 items-center">
-              {/* Bagian QR Code */}
               <div className="sm:col-span-5 flex flex-col items-center text-center bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
                 <div className="mb-2 p-1 bg-slate-50 rounded-lg">
                   <img 
@@ -103,7 +144,6 @@ const InfoSection = () => {
                 </span>
               </div>
 
-              {/* Bagian Kontak */}
               <div className="sm:col-span-7 space-y-4">
                 <div>
                   <h4 className="font-black text-slate-900 text-lg flex items-center gap-2 mb-1">
@@ -147,7 +187,6 @@ const InfoSection = () => {
                 </div>
               </div>
             </div>
-            {/* ========================================================= */}
 
           </div>
 
@@ -196,67 +235,69 @@ const InfoSection = () => {
               </div>
             </div>
 
-            {/* Lingkup Data (Expandable List) */}
-            <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
-              <h4 className="font-black text-slate-900 mb-6 text-sm uppercase tracking-widest">
-                Komponen Data Untuk Pemutakhiran
-              </h4>
-              <div className="space-y-4">
-                {scheduleData.cakupan_data.map((item, i) => (
-                  <div
-                    key={i}
-                    className={`group rounded-2xl transition-all duration-300 border ${
-                      openIndex === i
-                        ? "bg-[#700D09]/5 border-[#700D09]/20"
-                        : "bg-slate-50 border-transparent hover:bg-slate-100"
-                    }`}
-                  >
-                    <button
-                      onClick={() => setOpenIndex(openIndex === i ? null : i)}
-                      className="w-full flex items-center justify-between p-5 font-bold text-sm text-slate-800"
+            {/* Lingkup Data (Expandable List - Fetched Online) */}
+            {liveData.cakupan_data && liveData.cakupan_data.length > 0 && (
+              <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
+                <h4 className="font-black text-slate-900 mb-6 text-sm uppercase tracking-widest">
+                  Komponen Data Untuk Pemutakhiran
+                </h4>
+                <div className="space-y-4">
+                  {liveData.cakupan_data.map((item, i) => (
+                    <div
+                      key={i}
+                      className={`group rounded-2xl transition-all duration-300 border ${
+                        openIndex === i
+                          ? "bg-[#700D09]/5 border-[#700D09]/20"
+                          : "bg-slate-50 border-transparent hover:bg-slate-100"
+                      }`}
                     >
-                      <span className="flex items-center gap-3">
-                        <div
-                          className={`w-6 h-6 rounded-full flex items-center justify-center transition-colors ${
-                            openIndex === i
-                              ? "bg-[#700D09] text-white"
-                              : "bg-white text-orange-500 shadow-sm"
-                          }`}
-                        >
-                          <CheckCircle2 size={14} />
-                        </div>
-                        {item}
-                      </span>
-                      <ChevronDown
-                        size={16}
-                        className={`transition-transform duration-300 ${
-                          openIndex === i
-                            ? "rotate-180 text-[#700D09]"
-                            : "text-slate-400"
-                        }`}
-                      />
-                    </button>
-
-                    <AnimatePresence>
-                      {openIndex === i && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.3, ease: "easeInOut" }}
-                          className="overflow-hidden"
-                        >
-                          <div className="px-5 pb-5 pt-4 text-sm text-slate-600 leading-relaxed border-t border-[#700D09]/10">
-                            {deskripsiCakupan[item] ||
-                              "Informasi detail terkait elemen data ini."}
+                      <button
+                        onClick={() => setOpenIndex(openIndex === i ? null : i)}
+                        className="w-full flex items-center justify-between p-5 font-bold text-sm text-slate-800"
+                      >
+                        <span className="flex items-center gap-3">
+                          <div
+                            className={`w-6 h-6 rounded-full flex items-center justify-center transition-colors ${
+                              openIndex === i
+                                ? "bg-[#700D09] text-white"
+                                : "bg-white text-orange-500 shadow-sm"
+                            }`}
+                          >
+                            <CheckCircle2 size={14} />
                           </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                ))}
+                          {item}
+                        </span>
+                        <ChevronDown
+                          size={16}
+                          className={`transition-transform duration-300 ${
+                            openIndex === i
+                              ? "rotate-180 text-[#700D09]"
+                              : "text-slate-400"
+                          }`}
+                        />
+                      </button>
+
+                      <AnimatePresence>
+                        {openIndex === i && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.3, ease: "easeInOut" }}
+                            className="overflow-hidden"
+                          >
+                            <div className="px-5 pb-5 pt-4 text-sm text-slate-600 leading-relaxed border-t border-[#700D09]/10">
+                              {deskripsiCakupan[item] ||
+                                "Informasi detail terkait elemen data ini."}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
