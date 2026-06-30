@@ -8,7 +8,8 @@ import {
   X,
   Loader2,
   ArrowUpRight,
-  Info
+  Info,
+  ExternalLink
 } from "lucide-react";
 // Import koneksi db Firestore dari config Firebase Anda
 import { db } from "../Config/firebase"; 
@@ -210,8 +211,32 @@ const PeriodeSection = () => {
               </p>
             </div>
 
+            {/* PEMBERITAHUAN MANDIRI: URL PEMUTAKHIRAN DATA SIPOL UNTUK ANGGOTA PARPOL */}
+            <div className="mt-8 p-4 bg-orange-50/60 border border-orange-200 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-start gap-3 text-center sm:text-left">
+                <div className="bg-orange-100 p-2 rounded-xl text-orange-600 hidden sm:block flex-shrink-0 mt-0.5">
+                  <Info size={18} />
+                </div>
+                <div>
+                  <h5 className="font-bold text-slate-900 text-sm mb-0.5">Akses Mandiri Aplikasi SIPOL</h5>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    Bagi pengurus dan anggota partai politik tingkat Kabupaten Sekadau, Anda dapat melaksanakan penginputan serta pemutakhiran berkas administrasi kepesertaan secara mandiri melalui tautan resmi Sistem Informasi Partai Politik.
+                  </p>
+                </div>
+              </div>
+              <a
+                href="https://sipol.kpu.go.id"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-sm shadow-orange-600/10 transition-colors whitespace-nowrap"
+              >
+                <span>Buka SIPOL</span>
+                <ExternalLink size={13} />
+              </a>
+            </div>
+
             {/* AREA BOTTOM BUTTONS */}
-            <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-4">
               {/* Tombol SOP */}
               {liveData.sop?.sop_utama && (
                 <button

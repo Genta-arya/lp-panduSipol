@@ -187,10 +187,10 @@ const InfoSection = () => {
                       </div>
                       <div>
                         <p className="text-[10px] text-slate-400 group-hover:text-red-200 font-medium">
-                          Admin 1
+                          Operator 1
                         </p>
                         <p className="text-xs font-bold">
-                          Genta (0896-1860-1348)
+                          Agung
                         </p>
                       </div>
                     </a>
@@ -206,10 +206,10 @@ const InfoSection = () => {
                       </div>
                       <div>
                         <p className="text-[10px] text-slate-400 group-hover:text-red-200 font-medium">
-                          Admin 2
+                          Operator 2
                         </p>
                         <p className="text-xs font-bold">
-                          Agung (0822-6124-7070)
+                          Genta
                         </p>
                       </div>
                     </a>
